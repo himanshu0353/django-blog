@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from .models import Blog, Category
 from django.db.models import Q
@@ -18,10 +18,9 @@ def posts_by_category(request, category_id):
     return render(request, 'posts_by_category.html', context)
 
 def blogs(request, slug):
-    try:
-        single_blog = Blog.objects.get(slug=slug, status='Published')
-    except:
-        pass
+    
+    single_blog = get_object_or_404(Blog, slug=slug)
+    
     context = {
         'single_blog' : single_blog
     }
