@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+from autoslug import AutoSlugField
+
 
 # Create your models here.
 class Category(models.Model):
@@ -20,7 +22,7 @@ STATUS_CHOICES = (
     
 class Blog(models.Model):
     title = models.CharField(max_length=100)
-    slug = models.SlugField(max_length=150, unique=True)
+    slug = AutoSlugField(populate_from='title', unique=True, max_length=150)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     featured_image = models.ImageField(upload_to='uploads/%Y/%m/%d')
@@ -33,3 +35,5 @@ class Blog(models.Model):
 
     def __str__(self):
         return self.title
+
+    

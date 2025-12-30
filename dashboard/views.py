@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from blogs.models import Category,Blog
 from django.contrib.auth.decorators import login_required
-from .forms import CategoryForm
+from .forms import CategoryForm, PostForm
 # Create your views here.
+
 @login_required(login_url='login')
 def dashboard(request):
     category_count = Category.objects.all().count() 
@@ -46,3 +47,45 @@ def delete_category(request,pk):
     category = get_object_or_404(Category, pk=pk)
     category.delete()
     return redirect('dashboard:categories')
+
+def posts(request):
+    posts = Blog.objects.all()
+    context = {
+        'posts':posts,
+    }
+    return render(request, 'dashboard/posts.html', context)
+
+def add_posts(request):
+    if request.method == 'POST':
+        form = PostForm(request.POST, request.FILES)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.author = request.user
+            # Let AutoSlugField on the model set the slug on save
+            post.save()
+            return redirect('dashboard:posts')
+    form = PostForm()
+    context = {
+        'form':form,
+    }
+    return render(request, 'dashboard/add_post.html', context)
+
+def edit_post(request, pk):
+    post = get_object_or_404(Blog, pk=pk)
+    if request.method == 'POST':
+        form = PostForm(request.POST, request.FILES, instance=post)
+        if form.is_valid():
+            form.save()
+            return redirect('dashboard:posts')
+   
+    form = PostForm(instance=post)
+    context = {
+        'post':post,
+        'form':form,
+    }
+    return render(request, 'dashboard/edit_posts.html', context)
+
+def delete_post(request, pk):
+    post = get_object_or_404(Blog, pk=pk)
+    post.delete()
+    return render(request, 'dashboard:posts')

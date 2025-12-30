@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{%block content %}
+
+<div class='row'>
+    
+    {% include 'dashboard/sidebar.html'%}
+    
+    <div class='col-md-9'>
+        <h1>All Post</h1>
+        <a href='{% url 'dashboard:add_posts' %}' class='btn btn-dark text-light float-right mb-2'>Add New</a>
+        <table class="table table-hover">
+  <thead>
+    <tr> 
+      
+      <th>Title</th>
+      <th>Category</th> 
+      <th>Author</th>
+      <th>Status</th>
+      <th>Feature</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for cat in posts %}
+    <tr>
+      <td>{{cat.title}}</td>
+      <td>{{cat.category}}</td>
+      <td>{{cat.author}}</td>
+      <td>{{cat.status}}</td>
+      <td>{% if cat.is_featured %}<i class='fa fa-check text-success'></i>{% else%}<i class='fa fa-times text-danger'></i>{% endif%}</td>
+      <td>
+        <a href="{% url 'dashboard:edit_post' cat.id %}"><i class="fa fa-edit text-success"></i></a>
+        &nbsp;
+        <a href="{% url 'dashboard:delete_category' cat.id %}"><i class='fa fa-trash text-danger'></i></a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+    </div>
+</div> 
+
+
+{%endblock%}
